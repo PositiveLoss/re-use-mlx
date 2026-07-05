@@ -1,0 +1,5 @@
+.venv
+*.wav
+*.opus
+__pycache__/
+re-use-mlx/
