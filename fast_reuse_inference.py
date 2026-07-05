@@ -94,7 +94,10 @@ def load_legacy_faraday_weights(model_path: Path):
         mx.eval(model.parameters())
         return model
 
-    print(f"Warning: {model_path.name} uses an outdated key format. Converting on the fly...", flush=True)
+    print(
+        f"Warning: {model_path.name} uses an outdated key format. Converting on the fly...",
+        flush=True,
+    )
     state = {}
     with safe_open(str(model_path), "numpy") as f:
         for k in f.keys():
@@ -102,20 +105,22 @@ def load_legacy_faraday_weights(model_path: Path):
             new_k = new_k.replace("denseEncoder", "dense_encoder")
             new_k = new_k.replace("maskDecoder", "mask_decoder")
             new_k = new_k.replace("phaseDecoder", "phase_decoder")
-            
+
             if ".denseBlock.layers." in new_k:
-                new_k = new_k.replace(".denseBlock.layers.", ".dense_block.dense_block.")
-            
+                new_k = new_k.replace(
+                    ".denseBlock.layers.", ".dense_block.dense_block."
+                )
+
             new_k = new_k.replace("upConv1", "up_conv1")
             new_k = new_k.replace("upConv2", "up_conv2")
             new_k = new_k.replace("finalConv", "final_conv")
-            
+
             new_k = new_k.replace(".conv1.", ".dense_conv_1.")
             new_k = new_k.replace(".conv2.", ".dense_conv_2.")
-            
+
             new_k = new_k.replace("phaseConvR", "phase_conv_r")
             new_k = new_k.replace("phaseConvI", "phase_conv_i")
-            
+
             new_k = new_k.replace("tfMamba", "TSMamba")
             new_k = new_k.replace("freqMamba", "freq_mamba")
             new_k = new_k.replace("timeMamba", "time_mamba")
@@ -124,7 +129,7 @@ def load_legacy_faraday_weights(model_path: Path):
             new_k = new_k.replace("dtProj", "dt_proj")
             new_k = new_k.replace("xProj", "x_proj")
             new_k = new_k.replace("outputProj", "output_proj")
-            
+
             new_k = new_k.replace("forward.conv1d", "forward_blocks.conv1d")
             new_k = new_k.replace("forward.dt_proj", "forward_blocks.dt_proj")
             new_k = new_k.replace("forward.in_proj", "forward_blocks.in_proj")
@@ -132,7 +137,7 @@ def load_legacy_faraday_weights(model_path: Path):
             new_k = new_k.replace("forward.x_proj", "forward_blocks.x_proj")
             new_k = new_k.replace("forward.A_log", "forward_blocks.A_log")
             new_k = new_k.replace("forward.D", "forward_blocks.D")
-            
+
             new_k = new_k.replace("backward.conv1d", "backward_blocks.conv1d")
             new_k = new_k.replace("backward.dt_proj", "backward_blocks.dt_proj")
             new_k = new_k.replace("backward.in_proj", "backward_blocks.in_proj")
@@ -140,11 +145,11 @@ def load_legacy_faraday_weights(model_path: Path):
             new_k = new_k.replace("backward.x_proj", "backward_blocks.x_proj")
             new_k = new_k.replace("backward.A_log", "backward_blocks.A_log")
             new_k = new_k.replace("backward.D", "backward_blocks.D")
-            
+
             new_k = re.sub(r"\.layers\.0\.", ".conv.", new_k)
             new_k = re.sub(r"\.layers\.1\.", ".norm.", new_k)
             new_k = re.sub(r"\.layers\.2\.", ".act.", new_k)
-            
+
             state[new_k] = mx.array(f.get_tensor(k))
 
     model = SEMamba()

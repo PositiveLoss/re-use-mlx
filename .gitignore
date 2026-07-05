@@ -4,3 +4,4 @@
 __pycache__/
 re-use-mlx/
 run_error.log
+.ruff_cache/

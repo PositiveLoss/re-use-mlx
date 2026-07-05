@@ -187,11 +187,15 @@ def selective_scan_metal(
     monkey-patched into the existing runtime.
     """
     if u.ndim != 3 or delta.ndim != 3 or B.ndim != 3 or C.ndim != 3 or A.ndim != 2:
-        return selective_scan_reference(u, delta, A, B, C, D, z, delta_bias, delta_softplus)
+        return selective_scan_reference(
+            u, delta, A, B, C, D, z, delta_bias, delta_softplus
+        )
 
     batch, dim, length = u.shape
     if delta.shape != (batch, dim, length):
-        raise ValueError(f"delta must have shape {(batch, dim, length)}, got {delta.shape}")
+        raise ValueError(
+            f"delta must have shape {(batch, dim, length)}, got {delta.shape}"
+        )
     dstate = A.shape[1]
     if A.shape != (dim, dstate):
         raise ValueError(f"A must have shape [d_inner, d_state], got {A.shape}")
@@ -203,7 +207,9 @@ def selective_scan_metal(
     # The register-array implementation is intended for small d_state. RE-USE
     # uses d_state=16. Fall back rather than generating a huge per-thread array.
     if dstate <= 0 or dstate > max_register_state:
-        return selective_scan_reference(u, delta, A, B, C, D, z, delta_bias, delta_softplus)
+        return selective_scan_reference(
+            u, delta, A, B, C, D, z, delta_bias, delta_softplus
+        )
 
     u = _f32_contiguous(u)
     delta = _f32_contiguous(delta)
@@ -275,10 +281,12 @@ def install_fast_reuse_scan(*, verbose: bool = True) -> list[str]:
 
     scan_mod.selective_scan = selective_scan_metal
     block_mod.selective_scan = selective_scan_metal
-    patched.extend([
-        "mlx_speech.models.reuse.mamba.scan.selective_scan",
-        "mlx_speech.models.reuse.mamba.block.selective_scan",
-    ])
+    patched.extend(
+        [
+            "mlx_speech.models.reuse.mamba.scan.selective_scan",
+            "mlx_speech.models.reuse.mamba.block.selective_scan",
+        ]
+    )
 
     if verbose:
         print("Installed fast RE-USE selective scan:")

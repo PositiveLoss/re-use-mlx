@@ -17,7 +17,9 @@ import mlx.core as mx
 from mlx_reuse_fast_scan import selective_scan_metal, selective_scan_reference
 
 
-def _case(name: str, batch: int, dim: int, length: int, dstate: int, iters: int = 100) -> None:
+def _case(
+    name: str, batch: int, dim: int, length: int, dstate: int, iters: int = 100
+) -> None:
     mx.random.seed(0)
     u = mx.random.normal((batch, dim, length), dtype=mx.float32)
     delta = mx.random.normal((batch, dim, length), dtype=mx.float32) * 0.2
@@ -52,7 +54,9 @@ def _case(name: str, batch: int, dim: int, length: int, dstate: int, iters: int 
 
     fast_ms = (t1 - t0) / iters * 1e3
     ref_ms = (t3 - t2) / ref_iters * 1e3
-    print(f"{name}: metal={fast_ms:.3f} ms, reference={ref_ms:.3f} ms, speedup={ref_ms / fast_ms:.1f}x")
+    print(
+        f"{name}: metal={fast_ms:.3f} ms, reference={ref_ms:.3f} ms, speedup={ref_ms / fast_ms:.1f}x"
+    )
 
 
 def main() -> None:
