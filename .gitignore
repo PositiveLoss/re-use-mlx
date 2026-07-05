@@ -3,3 +3,4 @@
 *.opus
 __pycache__/
 re-use-mlx/
+run_error.log
