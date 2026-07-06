@@ -1,5 +1,7 @@
 # Fast RE-USE / SEMamba inference on Apple Silicon with MLX + Metal
 
+> Check out https://github.com/PositiveLoss/re-use-swift-mlx
+
 This package patches the pure-MLX RE-USE / SEMamba runtime from `mlx-speech` so
 its Mamba selective scan runs in one custom Metal kernel instead of a Python loop.
 
